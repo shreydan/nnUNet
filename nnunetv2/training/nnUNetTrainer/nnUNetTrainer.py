@@ -64,6 +64,9 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 
 # --------------------------------------------------------------------------------------------------------------------
 
+from multiprocessing import Pool
+from batchgenerators.utilities.file_and_folder_operations import *
+
 def should_i_save_to_file(prediction: np.ndarray, results_list: List = None, export_pool: Pool = None):
     """
     There is a problem with python process communication that prevents us from communicating objects
@@ -97,6 +100,14 @@ def should_i_save_to_file(prediction: np.ndarray, results_list: List = None, exp
             if check_workers_busy(export_pool, results_list, allowed_num_queued=len(export_pool._pool)):
                 return True
     return False
+
+
+def check_is_pool_alive(export_pool: Pool):
+    is_alive = [i.is_alive for i in export_pool._pool]
+    if not all(is_alive):
+        raise RuntimeError("Some workers in the export pool are no longer alive. That should not happen. You "
+                           "probably don't have enough RAM :-(")
+
 
 def check_workers_busy(export_pool: Pool, results_list: List, allowed_num_queued: int = 0):
     """
