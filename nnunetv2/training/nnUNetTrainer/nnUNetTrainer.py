@@ -1088,8 +1088,8 @@ class nnUNetTrainer(object):
                     mod = self.network.module
                 else:
                     mod = self.network
-                if isinstance(mod, OptimizedModule):
-                    mod = mod._orig_mod
+#                 if isinstance(mod, OptimizedModule):
+#                     mod = mod._orig_mod
 
                 checkpoint = {
                     'network_weights': mod.state_dict(),
